@@ -11,7 +11,6 @@ package main
 
 import (
 	"flag"
-	"fmt"
 	"os"
 	"path"
 	"regexp"
@@ -20,21 +19,21 @@ import (
 
 const (
 	// BaseProduct
-	baseProductRgx = `^\tBaseProduct$`
+	baseProduct = `\tBaseProduct`
 
-	baseProductGroupRgx = `^\tBaseProductGroup+$`
+	baseProductGroup = `\tBaseProductGroup`
 
 	// BaseAttachment
 	baseAttachment = "\tBaseAttachment"
 
 	// BaseSalesPrice
-	baseSalesPriceRgx = `^\tBaseSalesPrice+$`
+	baseSalesPrice = `\tBaseSalesPrice`
 
 	// BaseRecordFields
-	baseRecordFieldsRgx = `^\tBaseRecordFields+$`
+	baseRecordFields = `\tBaseRecordFields`
 
 	// baseContent
-	baseContentRgx = `^\tBaseContent+$`
+	baseContent = `\tBaseContent`
 )
 
 var (
@@ -113,7 +112,6 @@ func main() {
 
 	err = os.WriteFile(path.Join(editedOutDir, "BaseProduct.go"), []byte(baseAttachmentContent), 0666)
 	checkError(err)
-	fmt.Println(baseProductContent)
 
 	_ = editedOutDir
 	_ = dir
@@ -129,4 +127,21 @@ func getStructContent(content string) string {
 	const startStructBlock = `struct {`
 	lenStartStruct := len(startStructBlock)
 	return content[strings.Index(content, startStructBlock)+lenStartStruct : strings.Index(content, `}`)]
+}
+
+func expandEmbedStruct(fileContent string) string {
+
+	fileContent = strings.ReplaceAll(fileContent, baseAttachment, getStructContent(baseAttachmentContent))
+
+	fileContent = strings.ReplaceAll(fileContent, baseProduct, getStructContent(baseProductContent))
+
+	fileContent = strings.ReplaceAll(fileContent, baseProductGroup, getStructContent(baseProductGroupContent))
+
+	fileContent = strings.ReplaceAll(fileContent, baseSalesPrice, getStructContent(baseSalesPriceContent))
+
+	fileContent = strings.ReplaceAll(fileContent, baseRecordFields, getStructContent(baseRecordFieldsContent))
+
+	fileContent = strings.ReplaceAll(fileContent, baseContent, getStructContent(baseContentContent))
+
+	return fileContent
 }
