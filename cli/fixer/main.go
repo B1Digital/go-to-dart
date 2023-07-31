@@ -20,12 +20,12 @@ import (
 
 const (
 	// BaseProduct
-	baseProductRgx = `^\tBaseProduct+$`
+	baseProductRgx = `^\tBaseProduct$`
 
 	baseProductGroupRgx = `^\tBaseProductGroup+$`
 
 	// BaseAttachment
-	baseAttachmentRgxs = `^\tBaseAttachment+$`
+	baseAttachment = "\tBaseAttachment"
 
 	// BaseSalesPrice
 	baseSalesPriceRgx = `^\tBaseSalesPrice+$`
@@ -38,6 +38,7 @@ const (
 )
 
 var (
+	regexs   map[*regexp.Regexp]bool
 	inputDir = flag.String("input", "models", "models dir")
 
 	outputDir = flag.String("output", "out", "output directory")
@@ -58,6 +59,18 @@ var (
 	baseContentContent string
 )
 
+var (
+	bases = map[string]bool{
+		"base_sales_price.go": true,
+		"BaseAttachment.go":   true,
+		"BaseContent.go":      true,
+		"BaseList.go":         true,
+		"BaseProduct.go":      true,
+		"BaseProductGroup.go": true,
+		"BaseRecordFields.go": true,
+	}
+)
+
 func main() {
 	dir, err := os.ReadDir(*inputDir)
 	if err != nil {
@@ -65,47 +78,43 @@ func main() {
 	}
 
 	editedOutDir := path.Join(*inputDir, "edited")
+
+	err = os.MkdirAll(editedOutDir, 0666)
+	checkError(err)
+
 	fileContent, err := os.ReadFile(*inputDir + "/base_sales_price.go")
 	checkError(err)
 	baseSalesPriceContent = string(fileContent)
-	baseSalesPriceContent = getStructContent(baseSalesPriceContent)
 
 	fileContent, err = os.ReadFile(*inputDir + "/BaseAttachment.go")
 	checkError(err)
 	baseAttachmentContent = string(fileContent)
-	baseAttachmentContent = getStructContent(baseAttachmentContent)
 
 	//
 
 	fileContent, err = os.ReadFile(*inputDir + "/BaseContent.go")
 	checkError(err)
 	baseContentContent = string(fileContent)
-	baseContentContent = getStructContent(baseContentContent)
 
 	//
 
 	fileContent, err = os.ReadFile(*inputDir + "/BaseProduct.go")
 	checkError(err)
 	baseProductContent = string(fileContent)
-	baseProductContent = getStructContent(baseProductContent)
 
 	fileContent, err = os.ReadFile(*inputDir + "/BaseProductGroup.go")
 	checkError(err)
 	baseProductGroupContent = string(fileContent)
-	baseProductGroupContent = getStructContent(baseProductGroupContent)
 
 	fileContent, err = os.ReadFile(*inputDir + "/BaseRecordFields.go")
 	checkError(err)
 	baseRecordFieldsContent = string(fileContent)
-	baseRecordFieldsContent = getStructContent(baseRecordFieldsContent)
+	baseProductContent = strings.ReplaceAll(baseProductContent, baseAttachment, getStructContent(baseAttachmentContent))
 
-	baseAttachmentRgx, err := regexp.Compile(baseAttachmentRgxs)
+	err = os.WriteFile(path.Join(editedOutDir, "BaseProduct.go"), []byte(baseAttachmentContent), 0666)
 	checkError(err)
-	baseProductContent = string(baseAttachmentRgx.ReplaceAll([]byte(baseAttachmentContent), []byte(baseProductContent)))
-
 	fmt.Println(baseProductContent)
 
-	_ = baseAttachmentRgx
 	_ = editedOutDir
 	_ = dir
 }
