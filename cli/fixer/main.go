@@ -78,6 +78,8 @@ func main() {
 
 	editedOutDir := path.Join(*inputDir, "edited")
 
+	err = os.RemoveAll(editedOutDir)
+	checkError(err)
 	err = os.MkdirAll(editedOutDir, 0666)
 	checkError(err)
 
@@ -108,11 +110,44 @@ func main() {
 	fileContent, err = os.ReadFile(*inputDir + "/BaseRecordFields.go")
 	checkError(err)
 	baseRecordFieldsContent = string(fileContent)
+
 	baseProductContent = strings.ReplaceAll(baseProductContent, baseAttachment, getStructContent(baseAttachmentContent))
 
-	err = os.WriteFile(path.Join(editedOutDir, "BaseProduct.go"), []byte(baseAttachmentContent), 0666)
+	err = os.WriteFile(path.Join(editedOutDir, "BaseProduct.go"), []byte(expandEmbedStruct(baseProductContent)), 0666)
 	checkError(err)
 
+	err = os.WriteFile(path.Join(editedOutDir, "BaseProductGroup.go"), []byte(expandEmbedStruct(baseProductGroupContent)), 0666)
+	checkError(err)
+
+	// base_sales_price.go
+	err = os.WriteFile(path.Join(editedOutDir, "base_sales_price.go"), []byte(expandEmbedStruct(baseSalesPriceContent)), 0666)
+	checkError(err)
+
+	// BaseAttachment.go
+	err = os.WriteFile(path.Join(editedOutDir, "BaseAttachment.go"), []byte(expandEmbedStruct(baseAttachmentContent)), 0666)
+	checkError(err)
+
+	// BaseContent.go
+	err = os.WriteFile(path.Join(editedOutDir, "BaseContent.go"), []byte(expandEmbedStruct(baseContentContent)), 0666)
+	checkError(err)
+
+	// BaseRecordFields.go
+
+	err = os.WriteFile(path.Join(editedOutDir, "BaseRecordFields.go"), []byte(expandEmbedStruct(baseRecordFieldsContent)), 0666)
+	checkError(err)
+
+	for _, f := range dir {
+		if bases[f.Name()] || f.IsDir() {
+			continue
+		}
+		fileContent, err = os.ReadFile(path.Join(*inputDir, f.Name()))
+		checkError(err)
+		fileStr := string(fileContent)
+		fileStr = expandEmbedStruct(fileStr)
+		err = os.WriteFile(path.Join(editedOutDir, f.Name()), []byte(expandEmbedStruct(fileStr)), 0666)
+		checkError(err)
+
+	}
 	_ = editedOutDir
 	_ = dir
 }
