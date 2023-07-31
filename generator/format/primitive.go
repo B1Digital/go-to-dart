@@ -64,10 +64,10 @@ func (f *PrimitiveFormatter) DefaultValue(_ ast.Expr) string {
 	return ""
 }
 
-func (f *PrimitiveFormatter) Declaration(fieldName string, expr ast.Expr) string {
-	return fmt.Sprintf("%s %s", f.Signature(expr), fieldName)
+func (f *PrimitiveFormatter) Declaration(fieldName, nullable string, expr ast.Expr) string {
+	return fmt.Sprintf("%s%s %s", f.Signature(expr), nullable, fieldName)
 }
 
 func (f *PrimitiveFormatter) Constructor(fieldName string, _ ast.Expr) string {
-	return "required this." + fieldName
+	return "this." + fieldName
 }

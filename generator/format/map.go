@@ -31,10 +31,10 @@ func (f *MapFormatter) DefaultValue(expr ast.Expr) string {
 	return fmt.Sprintf("<%s, %s>{}", keyFormatter.Signature(keyExpr), valueFormatter.Signature(valueExpr))
 }
 
-func (f *MapFormatter) Declaration(fieldName string, expr ast.Expr) string {
-	return fmt.Sprintf("%s %s", f.Signature(expr), fieldName)
+func (f *MapFormatter) Declaration(fieldName, nullable string, expr ast.Expr) string {
+	return fmt.Sprintf("%s%s %s", f.Signature(expr), nullable, fieldName)
 }
 
 func (f *MapFormatter) Constructor(fieldName string, _ ast.Expr) string {
-	return "required this." + fieldName
+	return "this." + fieldName
 }

@@ -1,17 +1,22 @@
 package main
 
 import (
-	"github.com/11wizards/go-to-dart/generator/options"
-	"github.com/stretchr/testify/require"
 	"os"
 	"path"
 	"path/filepath"
 	"strings"
 	"testing"
+
+	"github.com/11wizards/go-to-dart/generator/options"
+	"github.com/stretchr/testify/require"
 )
 
+func TestEmbedWork(t *testing.T) {
+	runAndCompare(t, "./models", options.JSON)
+}
+
 func runAndCompare(t *testing.T, input string, mode options.Mode) {
-	output := path.Join(os.TempDir(), "go-to-dart-test-output", t.Name())
+	output := path.Join("go-to-dart-test-output", t.Name())
 
 	if err := os.RemoveAll(output); err != nil {
 		t.Fatal(err)

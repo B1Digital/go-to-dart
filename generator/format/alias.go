@@ -33,7 +33,7 @@ func (f *AliasFormatter) DefaultValue(_ ast.Expr) string {
 	return ""
 }
 
-func (f *AliasFormatter) Declaration(fieldName string, expr ast.Expr) string {
+func (f *AliasFormatter) Declaration(fieldName, nullable string, expr ast.Expr) string {
 	return fmt.Sprintf("%s %s", f.Signature(expr), fieldName)
 }
 

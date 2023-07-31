@@ -2,15 +2,19 @@ package generator
 
 import (
 	"fmt"
+	"go/ast"
+	"io"
+
 	"github.com/11wizards/go-to-dart/generator/format"
 	"github.com/11wizards/go-to-dart/generator/options"
 	"github.com/openconfig/goyang/pkg/indent"
-	"go/ast"
-	"io"
 )
 
 func generateFields(wr io.Writer, st *ast.StructType, registry *format.TypeFormatterRegistry, mode options.Mode) {
 	for _, f := range st.Fields.List {
+		if len(f.Names) == 0 {
+			continue
+		}
 		generateFieldDeclaration(wr, f, registry, mode)
 		fmt.Fprintln(wr, ";")
 	}

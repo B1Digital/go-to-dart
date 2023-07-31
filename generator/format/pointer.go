@@ -29,8 +29,8 @@ func (f *PointerFormatter) DefaultValue(_ ast.Expr) string {
 	return ""
 }
 
-func (f *PointerFormatter) Declaration(fieldName string, expr ast.Expr) string {
-	return fmt.Sprintf("%s %s", f.Signature(expr), fieldName)
+func (f *PointerFormatter) Declaration(fieldName, nullable string, expr ast.Expr) string {
+	return fmt.Sprintf("%s%s %s", f.Signature(expr), nullable, fieldName)
 }
 
 func (f *PointerFormatter) Constructor(fieldName string, _ ast.Expr) string {

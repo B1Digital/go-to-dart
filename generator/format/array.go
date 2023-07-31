@@ -29,10 +29,10 @@ func (f *ArrayFormatter) DefaultValue(expr ast.Expr) string {
 	return fmt.Sprintf("<%s>[]", f.Signature(expr))
 }
 
-func (f *ArrayFormatter) Declaration(fieldName string, expr ast.Expr) string {
-	return fmt.Sprintf("%s %s", f.Signature(expr), fieldName)
+func (f *ArrayFormatter) Declaration(fieldName, nullable string, expr ast.Expr) string {
+	return fmt.Sprintf("%s%s %s", f.Signature(expr), nullable, fieldName)
 }
 
 func (f *ArrayFormatter) Constructor(fieldName string, _ ast.Expr) string {
-	return "required this." + fieldName
+	return "this." + fieldName
 }

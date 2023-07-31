@@ -36,10 +36,10 @@ func (f *FallbackFormatter) DefaultValue(_ ast.Expr) string {
 	return ""
 }
 
-func (f *FallbackFormatter) Declaration(fieldName string, expr ast.Expr) string {
+func (f *FallbackFormatter) Declaration(fieldName string, nullable string, expr ast.Expr) string {
 	return fmt.Sprintf("%s %s", f.Signature(expr), fieldName)
 }
 
 func (f *FallbackFormatter) Constructor(fieldName string, _ ast.Expr) string {
-	return "required this." + fieldName
+	return "this." + fieldName
 }

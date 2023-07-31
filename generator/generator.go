@@ -4,9 +4,6 @@ import (
 	"bytes"
 	_ "embed"
 	"fmt"
-	"github.com/11wizards/go-to-dart/generator/format"
-	"github.com/11wizards/go-to-dart/generator/format/mo"
-	"github.com/11wizards/go-to-dart/generator/options"
 	"go/ast"
 	"go/parser"
 	"go/token"
@@ -14,6 +11,10 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+
+	"github.com/11wizards/go-to-dart/generator/format"
+	"github.com/11wizards/go-to-dart/generator/format/mo"
+	"github.com/11wizards/go-to-dart/generator/options"
 )
 
 //go:embed dart/timestamp_converter.dart
@@ -69,33 +70,36 @@ func generateClasses(pkg *ast.Package, wr io.Writer, mode options.Mode) {
 		StructType *ast.StructType
 	}
 
-	ast.Inspect(pkg, func(node ast.Node) bool {
-		ts, ok := node.(*ast.TypeSpec)
-		if !ok {
-			return true
-		}
+	ast.Inspect(pkg,
+		func(node ast.Node) bool {
 
-		st, ok := ts.Type.(*ast.StructType)
-		if !ok {
-			return true
-		}
+			ts, ok := node.(*ast.TypeSpec)
+			if !ok {
+				return true
+			}
 
-		list = append(list, struct {
-			TypeSpec   *ast.TypeSpec
-			StructType *ast.StructType
-		}{
-			TypeSpec:   ts,
-			StructType: st,
+			st, ok := ts.Type.(*ast.StructType)
+			if !ok {
+				return true
+			}
+
+			list = append(list, struct {
+				TypeSpec   *ast.TypeSpec
+				StructType *ast.StructType
+			}{
+				TypeSpec:   ts,
+				StructType: st,
+			})
+
+			return false
 		})
-
-		return false
-	})
 
 	sort.Slice(list, func(i, j int) bool {
 		return list[i].TypeSpec.Name.Name < list[j].TypeSpec.Name.Name
 	})
 
 	for _, item := range list {
+
 		generateDartClass(wr, item.TypeSpec, item.StructType, registry, mode)
 	}
 }

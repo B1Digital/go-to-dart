@@ -2,8 +2,9 @@ package format
 
 import (
 	"fmt"
-	"github.com/11wizards/go-to-dart/generator/options"
 	"go/ast"
+
+	"github.com/11wizards/go-to-dart/generator/options"
 )
 
 type TypeFormatter interface {
@@ -11,7 +12,7 @@ type TypeFormatter interface {
 	CanFormat(expr ast.Expr) bool
 	Signature(expr ast.Expr) string
 	DefaultValue(expr ast.Expr) string
-	Declaration(fieldName string, expr ast.Expr) string
+	Declaration(fieldName string, nullableText string, expr ast.Expr) string
 	Constructor(fieldName string, expr ast.Expr) string
 }
 

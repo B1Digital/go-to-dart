@@ -33,10 +33,10 @@ func (f *StructFormatter) DefaultValue(_ ast.Expr) string {
 	return ""
 }
 
-func (f *StructFormatter) Declaration(fieldName string, expr ast.Expr) string {
-	return fmt.Sprintf("%s %s", f.Signature(expr), fieldName)
+func (f *StructFormatter) Declaration(fieldName string, nullable string, expr ast.Expr) string {
+	return fmt.Sprintf("%s? %s", f.Signature(expr), fieldName)
 }
 
 func (f *StructFormatter) Constructor(fieldName string, _ ast.Expr) string {
-	return "required this." + fieldName
+	return "this." + fieldName
 }

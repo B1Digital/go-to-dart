@@ -2,10 +2,11 @@ package generator
 
 import (
 	"fmt"
-	"github.com/11wizards/go-to-dart/generator/format"
-	"github.com/11wizards/go-to-dart/generator/options"
 	"go/ast"
 	"io"
+
+	"github.com/11wizards/go-to-dart/generator/format"
+	"github.com/11wizards/go-to-dart/generator/options"
 )
 
 func generateFieldJSONKey(writer io.Writer, f *ast.Field, registry *format.TypeFormatterRegistry, mode options.Mode) format.TypeFormatter {
@@ -46,7 +47,7 @@ func generateFieldJSONKey(writer io.Writer, f *ast.Field, registry *format.TypeF
 func generateFieldDeclaration(writer io.Writer, f *ast.Field, registry *format.TypeFormatterRegistry, mode options.Mode) {
 	formatter := generateFieldJSONKey(writer, f, registry, mode)
 
-	fmt.Fprintf(writer, "final %s", formatter.Declaration(format.GetFieldName(f), f.Type))
+	fmt.Fprintf(writer, "final %s", formatter.Declaration(format.GetFieldName(f), "?", f.Type))
 }
 
 func generateFieldConstrutor(writer io.Writer, f *ast.Field, registry *format.TypeFormatterRegistry) {

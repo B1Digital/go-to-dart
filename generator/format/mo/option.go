@@ -2,8 +2,9 @@ package mo
 
 import (
 	"fmt"
-	"github.com/11wizards/go-to-dart/generator/format"
 	"go/ast"
+
+	"github.com/11wizards/go-to-dart/generator/format"
 )
 
 type OptionFormatter struct {
@@ -34,8 +35,8 @@ func (f *OptionFormatter) DefaultValue(_ ast.Expr) string {
 	return ""
 }
 
-func (f *OptionFormatter) Declaration(fieldName string, expr ast.Expr) string {
-	return fmt.Sprintf("%s %s", f.Signature(expr), fieldName)
+func (f *OptionFormatter) Declaration(fieldName, nullable string, expr ast.Expr) string {
+	return fmt.Sprintf("%s%s %s", f.Signature(expr), nullable, fieldName)
 }
 
 func (f *OptionFormatter) Constructor(fieldName string, _ ast.Expr) string {
