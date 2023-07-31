@@ -11,8 +11,11 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"os"
 	"path"
+	"regexp"
+	"strings"
 )
 
 const (
@@ -22,7 +25,7 @@ const (
 	baseProductGroupRgx = `^\tBaseProductGroup+$`
 
 	// BaseAttachment
-	baseAttachmentRgx = `^\tBaseAttachment+$`
+	baseAttachmentRgxs = `^\tBaseAttachment+$`
 
 	// BaseSalesPrice
 	baseSalesPriceRgx = `^\tBaseSalesPrice+$`
@@ -63,11 +66,58 @@ func main() {
 
 	editedOutDir := path.Join(*inputDir, "edited")
 	fileContent, err := os.ReadFile(*inputDir + "/base_sales_price.go")
+	checkError(err)
+	baseSalesPriceContent = string(fileContent)
+	baseSalesPriceContent = getStructContent(baseSalesPriceContent)
+
+	fileContent, err = os.ReadFile(*inputDir + "/BaseAttachment.go")
+	checkError(err)
+	baseAttachmentContent = string(fileContent)
+	baseAttachmentContent = getStructContent(baseAttachmentContent)
+
+	//
+
+	fileContent, err = os.ReadFile(*inputDir + "/BaseContent.go")
+	checkError(err)
+	baseContentContent = string(fileContent)
+	baseContentContent = getStructContent(baseContentContent)
+
+	//
+
+	fileContent, err = os.ReadFile(*inputDir + "/BaseProduct.go")
+	checkError(err)
+	baseProductContent = string(fileContent)
+	baseProductContent = getStructContent(baseProductContent)
+
+	fileContent, err = os.ReadFile(*inputDir + "/BaseProductGroup.go")
+	checkError(err)
+	baseProductGroupContent = string(fileContent)
+	baseProductGroupContent = getStructContent(baseProductGroupContent)
+
+	fileContent, err = os.ReadFile(*inputDir + "/BaseRecordFields.go")
+	checkError(err)
+	baseRecordFieldsContent = string(fileContent)
+	baseRecordFieldsContent = getStructContent(baseRecordFieldsContent)
+
+	baseAttachmentRgx, err := regexp.Compile(baseAttachmentRgxs)
+	checkError(err)
+	baseProductContent = string(baseAttachmentRgx.ReplaceAll([]byte(baseAttachmentContent), []byte(baseProductContent)))
+
+	fmt.Println(baseProductContent)
+
+	_ = baseAttachmentRgx
+	_ = editedOutDir
+	_ = dir
+}
+
+func checkError(err error) {
 	if err != nil {
 		panic(err)
 	}
-	baseSalesPriceContent = string(fileContent)
+}
 
-	_ = editedOutDir
-	_ = dir
+func getStructContent(content string) string {
+	const startStructBlock = `struct {`
+	lenStartStruct := len(startStructBlock)
+	return content[strings.Index(content, startStructBlock)+lenStartStruct : strings.Index(content, `}`)]
 }
